@@ -9,6 +9,7 @@ interface Props {
     activities: Activity[];
     selectedActivity: Activity | undefined;
     editMode:boolean;
+    submitting:boolean;
     onSelectActivity: (id: string) => void;
     onDeleteActivity:(id: string) => void;
     onCancelActivity: () => void;
@@ -20,12 +21,13 @@ interface Props {
 
 export default function ActivityDashboard(
     { activities, selectedActivity, onCancelActivity, onSelectActivity, onDeleteActivity,
-        editMode, onFormOpen, onFormClose, onCreateOrEditActivity }: Props) {
+        editMode, submitting, onFormOpen, onFormClose, onCreateOrEditActivity }: Props) {
     return (
         <Grid>
             <Grid.Column width={10}>
                 <ActivityList
                     activities={activities}
+                    submitting={submitting}
                     onSelectActivity={onSelectActivity}
                     onDeleteActivity={onDeleteActivity}
                 />
@@ -41,6 +43,7 @@ export default function ActivityDashboard(
                     {editMode && 
                 <ActivityForm 
                 activity={selectedActivity}
+                submitting={submitting}
                 onFormClose={onFormClose}
                 onCreateOrEditActivity={onCreateOrEditActivity}
                 />}
