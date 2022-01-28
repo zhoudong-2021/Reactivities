@@ -1,22 +1,19 @@
+import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    activities: Activity[];
-    submitting: boolean;
-    onSelectActivity: (id: string) => void;
-    onDeleteActivity: (id: string) => void;
-}
 
-export default function ActivityList(
-    { activities, submitting, onSelectActivity, onDeleteActivity }: Props) {
+export default observer(function ActivityList() {
 
+    const { activityStore } = useStore();
+    const { activitiesOrderByDate: activities, loading, deleteActivity, selectActivity } = activityStore;
     const [selectedButton, setSelectedButton] = useState('');
-    
-    const handleActivityDelete = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>, activity:Activity)=> {
+
+    const handleActivityDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, activity: Activity) => {
         setSelectedButton(e.currentTarget.name);
-        onDeleteActivity(activity.id);
+        deleteActivity(activity.id);
     }
     return (
         <Segment>
@@ -36,7 +33,7 @@ export default function ActivityList(
                                     floated='right'
                                     content='Delete'
                                     color='red'
-                                    loading={submitting && selectedButton === activity.id}
+                                    loading={loading && selectedButton === activity.id}
                                     onClick={(e) => {
                                         handleActivityDelete(e, activity)
                                     }}
@@ -45,7 +42,7 @@ export default function ActivityList(
                                     floated='right'
                                     content='View'
                                     color='blue'
-                                    onClick={() => onSelectActivity(activity.id)}
+                                    onClick={() => selectActivity(activity.id)}
                                 />
                                 <Label basic content={activity.category} />
                             </Item.Extra>
@@ -55,4 +52,4 @@ export default function ActivityList(
             </Item.Group>
         </Segment>
     )
-}
+})
