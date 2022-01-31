@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { Button, Item, Label, Segment } from 'semantic-ui-react';
 import { Activity } from '../../../app/models/activity';
 import { useStore } from '../../../app/stores/store';
@@ -8,7 +9,7 @@ import { useStore } from '../../../app/stores/store';
 export default observer(function ActivityList() {
 
     const { activityStore } = useStore();
-    const { activitiesOrderByDate: activities, loading, deleteActivity, selectActivity } = activityStore;
+    const { activitiesOrderByDate: activities, loading, deleteActivity } = activityStore;
     const [selectedButton, setSelectedButton] = useState('');
 
     const handleActivityDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, activity: Activity) => {
@@ -39,10 +40,12 @@ export default observer(function ActivityList() {
                                     }}
                                 />
                                 <Button
+                                    as={NavLink}
+                                    to={`/activities/${activity.id}`}
                                     floated='right'
                                     content='View'
                                     color='blue'
-                                    onClick={() => selectActivity(activity.id)}
+                                    // onClick={() => selectActivity(activity.id)}
                                 />
                                 <Label basic content={activity.category} />
                             </Item.Extra>

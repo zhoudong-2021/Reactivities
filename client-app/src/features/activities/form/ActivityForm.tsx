@@ -1,15 +1,18 @@
 import { observer } from 'mobx-react-lite';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { NavLink, useHistory, useParams } from 'react-router-dom';
 import { Button, Form, Segment } from 'semantic-ui-react';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
 import { useStore } from '../../../app/stores/store';
 
 
 export default observer(function ActivityForm() {
-
+    const {id} = useParams<{id:string}>();
+    const history = useHistory();
     const { activityStore } = useStore();
-    const { selectedActivity, loading, createOrEditActivity, closeForm } = activityStore;
+    const { loadActivity, loading, loadingInitial, createOrEditActivity, selectedActivity } = activityStore;
 
-    const initialState = selectedActivity ?? {
+    const [activity, setActivity] = useState({
         id: '',
         title: '',
         category: '',
@@ -17,19 +20,23 @@ export default observer(function ActivityForm() {
         date: '',
         city: '',
         venue: '',
+    });
 
-    }
-
-    const [activity, setActivity] = useState(initialState);
+    useEffect(() => {
+        if(id) loadActivity(id).then(activity => setActivity(activity));
+    },[loadActivity, id]);
 
     const handleSubmit = () => {
         createOrEditActivity(activity);
+        history.push(`/activities/${selectedActivity!.id}`);
     }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
         setActivity({ ...activity, [name]: value });
     }
+       
+    if (loadingInitial) return <LoadingComponent inverted={true} content={''}/>;
 
     return (
         <Segment clearing>
@@ -51,10 +58,11 @@ export default observer(function ActivityForm() {
                     loading={loading}
                 />
                 <Button
+                    as={NavLink}
+                    to={`/activities`}
                     floated='right'
                     type='button'
                     content='cancel'
-                    onClick={()=>closeForm()}
                 />
             </Form>
         </Segment>

@@ -20,8 +20,7 @@ export default class ActivityStore {
             const data = await agent.Activities.list();
             runInAction(() => {
                 data.map(item => {
-                    item.date = item.date.slice(0, 10);
-                    this.activities.set(item.id, item);
+                    this.setActivity(item)
                 });
                 this.loadingInitial = false;
             })
@@ -35,8 +34,29 @@ export default class ActivityStore {
         return Array.from(this.activities.values()).sort((a,b) => Date.parse(a.date) - Date.parse(b.date));
     }
 
-    selectActivity = (id: string) => {
-        this.selectedActivity = this.activities.get(id);
+    loadActivity = async (id:string) => {
+        let activity = this.activities.get(id);
+        if(activity) {
+            this.selectedActivity = activity;
+            
+        }
+        else{
+            this.loadingInitial = true;
+            activity = await agent.Activities.details(id);
+            runInAction(() => {
+                if(activity){
+                    this.setActivity(activity);
+                    this.selectedActivity = activity;
+                }
+                this.loadingInitial = false;
+            });
+        }
+        return activity;
+    }
+
+    setActivity = (item:Activity) => {
+        item.date = item.date.slice(0, 10);
+        this.activities.set(item.id, item);
     }
 
     deleteActivity = async (id: string) => {
@@ -51,19 +71,6 @@ export default class ActivityStore {
             console.log(error);
             runInAction(() => this.loading = false)
         }
-    }
-
-    cancelSelectedActivity = () => {
-        this.selectedActivity = undefined;
-    }
-
-    openForm = (id?: string) => {
-        id ? this.selectActivity(id) : this.cancelSelectedActivity();
-        this.editMode = true;
-    }
-
-    closeForm = () => {
-        this.editMode = false;
     }
 
     createOrEditActivity = async (activity: Activity) => {
