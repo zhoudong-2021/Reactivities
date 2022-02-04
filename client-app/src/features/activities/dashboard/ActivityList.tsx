@@ -1,58 +1,28 @@
 import { observer } from 'mobx-react-lite';
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Button, Item, Label, Segment } from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
+import { Fragment } from 'react';
+import { Header } from 'semantic-ui-react';
 import { useStore } from '../../../app/stores/store';
+import ActivityListItem from './ActivityListItem';
 
 
 export default observer(function ActivityList() {
 
     const { activityStore } = useStore();
-    const { activitiesOrderByDate: activities, loading, deleteActivity } = activityStore;
-    const [selectedButton, setSelectedButton] = useState('');
+    const { groupedActivities } = activityStore;
 
-    const handleActivityDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, activity: Activity) => {
-        setSelectedButton(e.currentTarget.name);
-        deleteActivity(activity.id);
-    }
     return (
-        <Segment>
-            <Item.Group divided>
-                {activities.map(activity => (
-                    <Item key={activity.id}>
-                        <Item.Content>
-                            <Item.Header as='a'>{activity.title}</Item.Header>
-                            <Item.Meta>{activity.date}</Item.Meta>
-                            <Item.Description>
-                                <div>{activity.description}</div>
-                                <div>{activity.city}, {activity.date}</div>
-                            </Item.Description>
-                            <Item.Extra>
-                                <Button
-                                    name={activity.id}
-                                    floated='right'
-                                    content='Delete'
-                                    color='red'
-                                    loading={loading && selectedButton === activity.id}
-                                    onClick={(e) => {
-                                        handleActivityDelete(e, activity)
-                                    }}
-                                />
-                                <Button
-                                    as={NavLink}
-                                    to={`/activities/${activity.id}`}
-                                    floated='right'
-                                    content='View'
-                                    color='blue'
-                                    // onClick={() => selectActivity(activity.id)}
-                                />
-                                <Label basic content={activity.category} />
-                            </Item.Extra>
-                        </Item.Content>
-                    </Item>
-                ))}
-            </Item.Group>
-        </Segment>
+        <>
+            {groupedActivities.map(([group, activities]) => (
+                <Fragment key={group}>
+                    <Header color='teal'>
+                        {group}
+                    </Header>
+                            {activities.map(activity => (
+                                <ActivityListItem key={activity.id} activity={activity} />
+                            ))}
+                </Fragment>
+            ))}
+        </>
+
     )
 })

@@ -19,9 +19,9 @@ export default class ActivityStore {
         try {
             const data = await agent.Activities.list();
             runInAction(() => {
-                data.map(item => {
+                data.map(item => 
                     this.setActivity(item)
-                });
+                );
                 this.loadingInitial = false;
             })
         } catch (error) {
@@ -32,6 +32,15 @@ export default class ActivityStore {
 
     get activitiesOrderByDate() {
         return Array.from(this.activities.values()).sort((a,b) => Date.parse(a.date) - Date.parse(b.date));
+    }
+
+    
+    get groupedActivities() {
+        return Object.entries(this.activitiesOrderByDate.reduce((activities, activity) => {
+            const date = activity.date;
+            activities[date]= activities[date] ? [...activities[date], activity]:[activity];
+            return activities;
+        }, {} as {[key:string]: Activity[]}))
     }
 
     loadActivity = async (id:string) => {
