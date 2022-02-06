@@ -47,8 +47,6 @@ export default observer(function ActivityForm() {
         history.push(`/activities/${selectedActivity!.id}`);
     }
 
-
-
     if (loadingInitial) return <LoadingComponent inverted={true} content={''} />;
 
     return (
