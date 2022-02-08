@@ -2,7 +2,7 @@ import React from 'react';
 import { Message, MessageItem, MessageList } from 'semantic-ui-react';
 
 interface Props{
-    errors: string[] | undefined;
+    errors: any;
 }
 
 export default function ValidationErrors({errors}:Props){
@@ -10,7 +10,7 @@ export default function ValidationErrors({errors}:Props){
         <Message error>
             {errors && 
                 <MessageList>
-                    {errors.map((error, i) => (
+                    {errors.map((error:any, i:any) => (
                         <MessageItem key={i}>
                             {error}
                         </MessageItem>
