@@ -3,7 +3,6 @@ import agent from "../api/agent";
 import { User, UserFormValues } from "../models/user";
 import { store } from "./store";
 import { history } from "../..";
-import CommonStore from "./commonStore";
 
 export default class UserStore {
     user: User | null = null;
