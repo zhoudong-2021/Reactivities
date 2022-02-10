@@ -11,26 +11,19 @@ import MyTextArea from '../../../app/common/form/MyTextArea';
 import MySelectInput from '../../../app/common/form/MySelectInput';
 import { categoryOptions } from '../../../app/common/options/categoryOptions';
 import MyDateInput from '../../../app/common/form/MyDateInput';
-import { Activity } from '../../../app/models/activity';
+import { ActivityFormValues } from '../../../app/models/activity';
+
 
 export default observer(function ActivityForm() {
     const { id } = useParams<{ id: string }>();
     const history = useHistory();
     const { activityStore } = useStore();
-    const { loadActivity, loading, loadingInitial, createOrEditActivity, selectedActivity } = activityStore;
+    const { loadActivity, loadingInitial, createOrEditActivity} = activityStore;
 
-    const [activity, setActivity] = useState<Activity>({
-        id: '',
-        title: '',
-        category: '',
-        description: '',
-        date: null,
-        city: '',
-        venue: '',
-    });
+    const [activity, setActivity] = useState<ActivityFormValues>(new ActivityFormValues());
 
     useEffect(() => {
-        if (id) loadActivity(id).then(activity => setActivity(activity));
+        if (id) loadActivity(id).then(activity => setActivity(new ActivityFormValues(activity)));
     }, [loadActivity, id]);
 
     const activitySchema = Yup.object({
@@ -42,9 +35,10 @@ export default observer(function ActivityForm() {
         venue: Yup.string().required(),
     })
 
-    const handleFormSubmit = async (activity: Activity) => {
-        await createOrEditActivity(activity);
-        history.push(`/activities/${selectedActivity!.id}`);
+    const handleFormSubmit = (activity: ActivityFormValues) => {
+        createOrEditActivity(activity).then(() =>{
+            history.push(`/activities/`);
+        });
     }
 
     if (loadingInitial) return <LoadingComponent inverted={true} content={''} />;
@@ -63,7 +57,6 @@ export default observer(function ActivityForm() {
                         onSubmit={handleSubmit}
                         autoComplete='off'
                     >
-
                         <MyTextInput placeholder='Title' name='title' />
                         <MyTextArea rows={3} placeholder='Description' name='description' />
                         <MySelectInput options={categoryOptions} placeholder='Category' name='category' />
@@ -83,7 +76,7 @@ export default observer(function ActivityForm() {
                             positive
                             type='submit'
                             content='submit'
-                            loading={loading}
+                            loading={isSubmitting}
                         />
                         <Button
                             as={NavLink}
