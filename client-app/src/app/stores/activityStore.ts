@@ -12,6 +12,7 @@ export default class ActivityStore {
     editMode = false;
     loading = false;
     loadingInitial = false;
+    needReloading = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -98,15 +99,15 @@ export default class ActivityStore {
             if (id) {
                 await agent.Activities.update(activity);
                 const originalActivity = await this.loadActivity(id!);
-                runInAction(() =>{
-                    let updatedActivity = {...originalActivity, ...activity};
+                runInAction(() => {
+                    let updatedActivity = { ...originalActivity, ...activity };
                     this.selectedActivity = updatedActivity;
                     this.activities.set(id!, updatedActivity);
                 });
             }
-            else {          
+            else {
                 activity.id = uuid();
-                await agent.Activities.create( activity );
+                await agent.Activities.create(activity);
                 const newActivity = new Activity(activity);
                 newActivity.hostUsername = user!.username;
                 newActivity.attendees = [attendee];
@@ -126,10 +127,10 @@ export default class ActivityStore {
         try {
             await agent.Activities.attend(this.selectedActivity!.id);
             runInAction(() => {
-                if(this.selectedActivity?.isGoing){
+                if (this.selectedActivity?.isGoing) {
                     this.selectedActivity!.isGoing = false;
                     this.selectedActivity.attendees = this.selectedActivity.attendees?.filter(
-                        x => x.username !== user?.username);        
+                        x => x.username !== user?.username);
                 }
                 else {
                     var userProfile = new UserProfile(user!);
@@ -140,28 +141,36 @@ export default class ActivityStore {
             });
         } catch (error) {
             console.log(error);
-        } finally{
-            runInAction(() => 
+        } finally {
+            runInAction(() =>
                 this.loading = false
             )
-        } 
+        }
     }
 
-    cancelActivityToggle = async() => {
-        this.loading =true;
+    cancelActivityToggle = async () => {
+        this.loading = true;
         try {
             await agent.Activities.attend(this.selectedActivity!.id);
             runInAction(() => {
-            this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
-            this.activities.set(this.selectedActivity!.id, this.selectedActivity!);
+                this.selectedActivity!.isCancelled = !this.selectedActivity!.isCancelled;
+                this.activities.set(this.selectedActivity!.id, this.selectedActivity!);
             })
         } catch (error) {
             console.log(error);
-            
-        }finally{
+
+        } finally {
             runInAction(() => {
                 this.loading = false;
             })
         }
+    }
+
+    setNeedReloading = (state: boolean) => {
+        this.needReloading = state;
+    }
+
+    clearSelectedActivity = () => {
+        this.selectedActivity = undefined;
     }
 }

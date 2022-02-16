@@ -9,11 +9,15 @@ import ActivityList from './ActivityList';
 
 export default observer(function ActivityDashboard() {
     const { activityStore } = useStore();
-    const { loadingInitial, loadActivities, activitiesOrderByDate} = activityStore;
+    const { loadingInitial, loadActivities, activitiesOrderByDate,
+        needReloading, setNeedReloading} = activityStore;
   
     useEffect(() => {
-      if(activitiesOrderByDate.length < 2) loadActivities();
-    }, [loadActivities, activitiesOrderByDate]);
+      if(activitiesOrderByDate.length < 2 || needReloading) {
+          loadActivities();
+          setNeedReloading(false);
+        };
+    }, [loadActivities, activitiesOrderByDate, setNeedReloading, needReloading]);
   
     if(loadingInitial) return <LoadingComponent inverted={true} content={'Loading activities...'} />
 
