@@ -11,6 +11,7 @@ interface Props {
     activityId: string;
 }
 
+
 export default observer(function ActivityDetailedChat({ activityId }: Props) {
     const { commentStore: { createHubConnection, clearHubConnection,
         comments, addComment } } = useStore();
@@ -18,7 +19,7 @@ export default observer(function ActivityDetailedChat({ activityId }: Props) {
     useEffect(() => {
         if (activityId) createHubConnection(activityId);
         return () => clearHubConnection();
-    }, [createHubConnection, activityId])
+    }, [createHubConnection, activityId, clearHubConnection])
 
     return (
         <>

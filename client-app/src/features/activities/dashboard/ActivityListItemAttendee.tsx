@@ -10,6 +10,11 @@ interface Props {
 }
 
 export default observer(function ActivityListItemAttendee({ attendees }: Props) {
+    const style = {
+        borderWidth: 3,
+        borderColor: 'orange'
+    }
+
     return (
         <List horizontal>
             {attendees.map(attendee => (
@@ -17,9 +22,14 @@ export default observer(function ActivityListItemAttendee({ attendees }: Props) 
                     hoverable
                     key={attendee.username}
                     trigger={
-                        <List.Item key={attendee.username}>
-                            <Image as={Link} to={`/profiles/${attendee.username}`}
-                                size='mini' circular src={attendee.image || '/assets/user.png'} />
+                        <List.Item  key={attendee.username} as={Link} to={`/profiles/${attendee.username}`}>
+                            <Image 
+                                bordered
+                                size='mini' 
+                                circular 
+                                src={attendee.image || '/assets/user.png'} 
+                                style={attendee.isFollowing ? style : undefined}
+                                />
                         </List.Item>
                     }
                 >

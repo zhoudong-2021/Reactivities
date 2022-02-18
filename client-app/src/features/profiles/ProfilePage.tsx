@@ -8,10 +8,12 @@ import ProfileHeader from './ProfileHeader';
 
 export default observer(function ProfilePage() {
     const { username } = useParams<{ username: string }>();
-    const { profileStore: { profile, loadProfile } } = useStore();
+    const { profileStore: { profile, loadProfile, setTabSelected } } = useStore();
     useEffect(() => {
         loadProfile(username);
-    }, [loadProfile, username]);
+        return () => setTabSelected(0);
+    }, [loadProfile, username, setTabSelected]);
+
     return (
         <Grid>
             <Grid.Column width={16}>
