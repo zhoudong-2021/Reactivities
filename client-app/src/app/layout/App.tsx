@@ -28,7 +28,7 @@ function App() {
       commonStore.setAppLoaded(true);
   }, [userStore, commonStore])
 
-  if(!commonStore.appLoaded) return(<LoadingComponent content='Loading app...' inverted={false} />)
+  if(!commonStore.appLoaded) return(<LoadingComponent content='Loading app...' inverted={true} />)
 
   return (
     <>
