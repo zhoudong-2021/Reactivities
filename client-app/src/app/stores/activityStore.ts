@@ -14,7 +14,7 @@ export default class ActivityStore {
     loading = false;
     loadingInitial = false;
     needReloading = false;
-    pagination : Pagination | null = null;
+    pagination: Pagination | null = null;
     pagingParams = new PagingParams();
     predicate = new Map().set('all', true);
 
@@ -36,7 +36,7 @@ export default class ActivityStore {
         this.loadingInitial = true;
         try {
             const response = await agent.Activities.list(this.axiosParams);
-            runInAction(() => {         
+            runInAction(() => {
                 response.data.map(item =>
                     this.setActivity(item)
                 );
@@ -49,12 +49,12 @@ export default class ActivityStore {
         }
     }
 
-    setPredicate = (key:string, value: string|Date) => {
+    setPredicate = (key: string, value: string | Date) => {
         this.predicate.forEach((value, key) => {
-            if(key !== 'startDate') this.predicate.delete(key);
+            if (key !== 'startDate') this.predicate.delete(key);
         })
 
-        switch(key){
+        switch (key) {
             case 'all':
                 this.predicate.set('all', value);
                 break;
@@ -66,12 +66,12 @@ export default class ActivityStore {
                 break;
             default:
                 this.predicate.delete('startDate');
-                this.predicate.set('startDate', (value as Date).toISOString());
+                this.predicate.set('startDate', value);
                 break;
         }
     }
 
-    setPagination = (value:Pagination) => {
+    setPagination = (value: Pagination) => {
         this.pagination = value;
     }
 
@@ -79,12 +79,15 @@ export default class ActivityStore {
         this.pagingParams = value;
     }
 
-    get axiosParams(){
+    get axiosParams() {
         const params = new URLSearchParams();
         params.append('pageNumber', this.pagingParams.pageNumber.toString());
         params.append('pageSize', this.pagingParams.pageSize.toString());
-        this.predicate.forEach((value,key) => {
-            params.append(key, value);
+        this.predicate.forEach((value, key) => {
+            if (key === 'startDate')
+                params.append(key, (value as Date).toISOString());
+            else
+                params.append(key, value);
         })
         return params;
     }
@@ -229,13 +232,13 @@ export default class ActivityStore {
         this.selectedActivity = undefined;
     }
 
-    updateAttendeeFollowing = (username:string) => {
+    updateAttendeeFollowing = (username: string) => {
         this.activities.forEach(activity => {
             activity.attendees.forEach(attendee => {
-                if(attendee.username === username){
+                if (attendee.username === username) {
                     attendee.isFollowing ? attendee.followerCount!-- : attendee.followerCount!++;
                     attendee.isFollowing = !attendee.isFollowing;
-                } 
+                }
             })
         })
     }

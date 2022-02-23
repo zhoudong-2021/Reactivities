@@ -6,9 +6,9 @@ export interface Profile {
     bio?: string;
     image?: string;
     isFollowing?: boolean;
-    followerCount?:number;
-    followingCount?:number;
-    photos?:Photo[];
+    followerCount?: number;
+    followingCount?: number;
+    photos?: Photo[];
 }
 
 export class UserProfile implements Profile {
@@ -27,4 +27,11 @@ export interface Photo {
     id: string;
     url: string;
     isMain: boolean;
+}
+
+export interface UserActivity {
+    id: string;
+    title: string;
+    category: string;
+    date: Date;
 }

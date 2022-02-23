@@ -4,12 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Activities;
 using Application.Comments;
+using Application.profiles;
 using AutoMapper;
 using Domain;
 
 namespace Application.Core
 {
-    public class MappingProfiles : Profile
+    public class MappingProfiles : AutoMapper.Profile
     {
         public MappingProfiles()
         {
@@ -43,6 +44,14 @@ namespace Application.Core
                 .ForMember(d => d.Image, o => o.MapFrom(x =>
                     x.Author.Photos.FirstOrDefault(x => x.IsMain).Url));
 
+            CreateMap<ActivityAttendee, UserActivityDto>()
+                .ForMember(d => d.Id, o => o.MapFrom(x => x.ActivityId))
+                .ForMember(d => d.Title, o => o.MapFrom(x => x.Activity.Title))
+                .ForMember(d => d.Category, o => o.MapFrom(x => x.Activity.Category))
+                .ForMember(d => d.Date, o => o.MapFrom(x => x.Activity.Date))
+                .ForMember(d => d.HostUsername, o => o.MapFrom(x => 
+                    x.Activity.Attendees.FirstOrDefault(x => x.IsHost).AppUser.UserName));
+                
 
         }
     }
