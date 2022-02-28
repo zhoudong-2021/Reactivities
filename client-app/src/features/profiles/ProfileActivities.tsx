@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { observer } from 'mobx-react-lite';
 import React, { useEffect, useState } from 'react';
-import { Card, Grid, Header, Tab, Image, Loader } from 'semantic-ui-react';
+import { Card, Grid, Header, Tab, Image, Button} from 'semantic-ui-react';
 import LoadingComponent from '../../app/layout/LoadingComponent';
 import { useStore } from '../../app/stores/store';
 
@@ -16,7 +16,7 @@ export default observer(function ProfileActivities() {
     useEffect(() => {
         setLoading(true);
         loadUserActivities(profile!.username, 'future').then(() => setLoading(false));
-    }, [loadUserActivities])
+    }, [loadUserActivities, setLoading, profile])
 
     const handleSelect = (value: string) => {
         setActiveState(value);
@@ -32,15 +32,15 @@ export default observer(function ProfileActivities() {
                 <Grid.Column width={16}>
                     <Header icon='calendar' content='Activity' />
                     <div className="ui three item menu">
-                        <a className={activeState === 'future' ? 'item active' : 'item'} 
+                        <Button className={activeState === 'future' ? 'item active' : 'item'} 
                             onClick={() => handleSelect('future')}
-                        >Future Events</a>
-                        <a className={activeState === 'past' ? 'item active' : 'item'} 
+                        >Future Events</Button>
+                        <Button className={activeState === 'past' ? 'item active' : 'item'} 
                             onClick={() => handleSelect('past')}
-                        >Past Events</a>
-                        <a className={activeState === 'hosting' ? 'item active' : 'item'} 
+                        >Past Events</Button>
+                        <Button className={activeState === 'hosting' ? 'item active' : 'item'} 
                             onClick={() => handleSelect('hosting')}
-                        >Hosting</a>
+                        >Hosting</Button>
                     </div>
                 </Grid.Column>
                 <Grid.Column width={16}>
