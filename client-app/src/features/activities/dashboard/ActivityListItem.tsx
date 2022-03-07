@@ -20,7 +20,7 @@ export default observer( function ActivityListItem({ activity }: Props) {
                 }
                 <Item.Group>
                     <Item>
-                        <Item.Image style={{marginBottom:5}} size='tiny' circular src={`${activity.host?.image} || /assets/user.png`}/>
+                        <Item.Image style={{marginBottom:5}} size='tiny' circular src={activity.host?.image || '/assets/user.png'}/>
                         <Item.Content>
                             <Item.Header as={Link} to={`/activities/${activity.id}`}>
                                 {activity.title}

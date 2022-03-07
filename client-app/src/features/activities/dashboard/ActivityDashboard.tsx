@@ -16,9 +16,13 @@ export default observer(function ActivityDashboard() {
     const [loadingMore, setLoadingMore] = useState(false);
 
     useEffect(() => {
-        if (activitiesOrderByDate.length < 2 || needReloading) {
-            loadActivities();
-            setNeedReloading(false);
+        if(activitiesOrderByDate.length < 2)
+        loadActivities();
+    },[]);
+
+    useEffect(() => {
+        if (needReloading) {
+            loadActivities().then(() => setNeedReloading(false));
         };
     }, [loadActivities, activitiesOrderByDate, setNeedReloading, needReloading]);
 
